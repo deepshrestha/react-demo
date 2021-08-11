@@ -1,0 +1,14 @@
+.inputError {
+    font-family: Helvetica, Arial, sans-serif;
+    color: red;
+    margin-left: 100px;
+}
+
+.inputText {
+    padding: 20px 25px;
+    margin: 2px auto;
+    margin-left: 110px;
+    vertical-align: middle;
+    width: 40%;
+    font-size: 16px;
+}
