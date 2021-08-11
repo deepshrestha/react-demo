@@ -1,16 +1,22 @@
 import React, { useEffect, useRef } from "react";
+import ErrorMessage from "./../../FormValidator/ErrorMessage";
 
-const CustomerAdd = ({ onAddCustomerDataHandler, onChangeHandler }) => {
-
-  let inputRef = useRef()
+const CustomerAdd = ({
+  onHandleSubmit,
+  onHandleChange,
+  onHandleBlur,
+  errors,
+}) => {
+  //console.log("errors", errors)
+  let inputRef = useRef();
 
   useEffect(() => {
-      inputRef.current.focus();
-  }, [])
+    inputRef.current.focus();
+  }, []);
 
   return (
     <div className="content-wrapper">
-      <form className="row g-3 p-3" onSubmit={onAddCustomerDataHandler}>
+      <form className="row g-3 p-3" onSubmit={onHandleSubmit}>
         <div className="col-6">
           <label htmlFor="inputCustomername" className="form-label">
             Customer Name
@@ -21,8 +27,12 @@ const CustomerAdd = ({ onAddCustomerDataHandler, onChangeHandler }) => {
             name="CustomerName"
             className="form-control"
             id="inputCustomername"
-            onChange={onChangeHandler}
+            onChange={onHandleChange}
+            onBlur={onHandleBlur}
           />
+          {errors.CustomerName.length > 0 && (
+            <ErrorMessage errorMsg={errors.CustomerName} />
+          )}
         </div>
         <div className="col-6">
           <label htmlFor="inputZone" className="form-label">
@@ -33,7 +43,8 @@ const CustomerAdd = ({ onAddCustomerDataHandler, onChangeHandler }) => {
             name="Zone"
             className="form-control"
             id="inputZone"
-            onChange={onChangeHandler}
+            onChange={onHandleChange}
+            onBlur={onHandleBlur}
           />
         </div>
         <div className="col-md-6">
@@ -45,8 +56,10 @@ const CustomerAdd = ({ onAddCustomerDataHandler, onChangeHandler }) => {
             name="City"
             className="form-control"
             id="inputCity"
-            onChange={onChangeHandler}
+            onChange={onHandleChange}
+            onBlur={onHandleBlur}
           />
+          {errors.City.length > 0 && <ErrorMessage errorMsg={errors.City} />}
         </div>
         <div className="col-12 p-2">
           <button type="submit" className="btn btn-primary">

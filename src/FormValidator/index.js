@@ -5,11 +5,10 @@ export const useFormValidator = (props) => {
 
   const emailPattern = RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
 
-  const formValid = function (fields) {
+  const formValid = function (errors) {
     let valid = true;
-
-    Object.values(fields).forEach(function (value) {
-      value.length == 0 && (valid = false);
+    Object.values(errors).forEach(function (value) {
+      value.length !== 0 && (valid = false);
     });
 
     return valid;
@@ -17,13 +16,21 @@ export const useFormValidator = (props) => {
 
   const onHandleSubmit = (event) => {
     event.preventDefault();
-    Object.keys(fields).map((field) => {
-      if (event.target[field] !== undefined)
-        validate(field, fields[field], event.target[field].type, fields.errors);
+    let errors = fields.errors;
+    Object.keys(errors).map((error) => {
+      if (event.target[error] !== undefined)
+        validate(
+          error,
+          event.target[error].placeholder,
+          fields[error],
+          event.target[error].type,
+          fields.errors
+        );
     });
 
-    if (formValid(fields)) {
-      resetForm(event);
+    if (formValid(errors)) {
+      if(props.mode === "I")
+        resetForm(event);
       return true;
     } else {
       let errors = fields.errors;
@@ -41,32 +48,40 @@ export const useFormValidator = (props) => {
 
   const onHandleChange = (event) => {
     event.preventDefault();
-    const { name, value, type } = event.target;
+    const { name, placeholder, value, type } = event.target;
     let errors = props.errors;
-    validate(name, value, type, errors);
+    if(type === "select-multiple"){
+      let optionValue = Array.from(event.target.selectedOptions, option => option.value);
+      validate(name, placeholder, optionValue, type, errors);
+    }    
+    else
+      validate(name, placeholder, value, type, errors);
   };
 
   const onHandleBlur = (event) => {
     event.preventDefault();
-    const { name, value, type } = event.target;
+    const { name, placeholder, value, type } = event.target;
     let errors = props.errors;
-    validate(name, value, type, errors);
+    validate(name, placeholder, value, type, errors);
   };
-
-  function validate(name, value, type, errors) {
+  
+  const validate = (name, placeholder, value, type, errors) => {
     switch (type) {
       case "text":
       case "password":
         errors[name] =
-          value.length == 0 ? `${name} is required`.toUpperCase() : "";
+          (value.length && props.errors.hasOwnProperty(name)) == 0 ? `The ${placeholder ?? name} field is required` : "";
         break;
+      case "select-one":
+        errors[name] =
+          (value == 0 && props.errors.hasOwnProperty(name)) ? `The ${placeholder ?? name} field is required` : "";
+        break;
+      case "select-multiple":
+        errors[name] =
+        (value.length == 0 && props.errors.hasOwnProperty(name)) ? `The ${placeholder ?? name} field is required` : "";
+        break;        
       case "email":
-        errors.email =
-          value.length == 0
-            ? `${name} is required`.toUpperCase()
-            : !emailPattern.test(value)
-            ? "Email is invalid!".toUpperCase()
-            : "";
+        errors.email = (!emailPattern.test(value) && props.errors.hasOwnProperty(name)) ? "The Email is invalid!" : "";
         break;
       default:
         break;
@@ -75,15 +90,22 @@ export const useFormValidator = (props) => {
     setFields({
       ...fields,
       errors,
-      [name]: value,
+      [name]: value
     });
   }
 
   const resetForm = (event) => {
+    let resetFields = {
+      ...props,
+    };
     Object.keys(fields).forEach((field) => {
       if (event.target[field] !== undefined) {
         event.target[field].value = "";
       }
+    });
+    setFields({
+      ...fields,
+      ...resetFields,
     });
   };
 
@@ -92,5 +114,6 @@ export const useFormValidator = (props) => {
     onHandleSubmit,
     onHandleBlur,
     fields,
+    setFields
   };
 };

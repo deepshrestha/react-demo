@@ -4,10 +4,26 @@ import { useSelector, useDispatch } from "react-redux";
 import { onFetchCustomerDataByID } from "./../actions/customerAction";
 import { apiHandler } from "./../api/apiHandler";
 import CustomerEdit from "../components/customer/CustomerEdit";
+import { useFormValidator } from "./../FormValidator";
 
 const EditCustomerContainer = ({ match }) => {
   const history = useHistory();
-  const [formState, setFormState] = useState([]);
+
+  let initialState = {
+    mode: "U",
+    CustomerName: "",
+    Zone: "",
+    City: "",
+    errors: {
+      CustomerName: "",
+      City: "",
+    },
+  };
+
+  const { onHandleChange, onHandleSubmit, onHandleBlur, fields, setFields } =
+    useFormValidator(initialState);
+
+  const { errors } = fields;
 
   const { id } = match.params;
   const customerData = useSelector((state) => {
@@ -23,23 +39,12 @@ const EditCustomerContainer = ({ match }) => {
     onGetDataByIdHandler(id);
   }, []);
 
-  const onChangeHandler = (e) => {
-    e.preventDefault();
-    const { name, value } = e.target;
-    //console.log(name, value)
-    const formData = {
-      ...formState,
-      [name]: value,
-    };
-
-    setFormState(formData);
-  };
-
   const onGetDataByIdHandler = (id) => {
     //console.log(id)
     apiHandler(`http://localhost:3000/api/customerdata/${id}`)
       .then((result) => {
-        setFormState({
+        setFields({
+          ...fields,
           CustomerID: result[0].CustomerID,
           CustomerName: result[0].CustomerName,
           Zone: result[0].Zone,
@@ -54,10 +59,11 @@ const EditCustomerContainer = ({ match }) => {
 
   const onEditCustomerDataHandler = (e) => {
     e.preventDefault();
-    apiHandler(
+    if(onHandleSubmit(e)){
+      apiHandler(
       `http://localhost:3000/api/customerdata/edit/${id}`,
       "put",
-      formState
+      fields
     )
       .then(() => {
         console.log("Record updated!");
@@ -66,13 +72,15 @@ const EditCustomerContainer = ({ match }) => {
       .catch((err) => {
         alert(err);
       });
+    }
   };
 
   return (
     <CustomerEdit
       customerData={customerData.customer}
-      onEditCustomerDataHandler={onEditCustomerDataHandler}
-      onChangeHandler={onChangeHandler}
+      onHandleSubmit={onEditCustomerDataHandler}
+      onHandleChange={onHandleChange}
+      errors={errors}
     />
   );
 };

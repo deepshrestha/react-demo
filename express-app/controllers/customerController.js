@@ -1,4 +1,5 @@
-const customerDB = require("./../models/customerModel");
+const DB = require("./../models/customerModel");
+const customerDB = DB.customer;
 
 exports.getTotalCustomerData = (req, res) => {
   customerDB.countDocuments((err, result) => {

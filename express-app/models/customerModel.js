@@ -2,12 +2,13 @@ const mongoose = require("mongoose")
 mongoose.connect(
     "mongodb://localhost:27017/customer",
     {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
+        useNewUrlParser: true,  
+        useUnifiedTopology: true,  
+        useFindAndModify: false
     }
 )
 
-const customerSchema = mongoose.Schema(
+const customerSchema = new mongoose.Schema(
     {
         _id: {
             type: String
@@ -25,6 +26,26 @@ const customerSchema = mongoose.Schema(
             type: String
         }
     }    
-)
+);
 
-module.exports = mongoose.model('customer', customerSchema)
+const userSchema = new mongoose.Schema(
+    {
+        _id: {
+            type: Number
+        },
+        email: {
+            type: String
+        },
+        password: {
+            type: String
+        }
+    }    
+);
+
+const customer =  mongoose.model('customer', customerSchema);
+const userAccount = mongoose.model('userAccount', userSchema);
+
+module.exports= {
+    customer,
+    userAccount
+}

@@ -1,14 +1,17 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import {useFormValidator} from './../FormValidator'
 import ErrorMessage from './../FormValidator/ErrorMessage'
+import { apiHandler } from './../api/apiHandler';
 
 const Login = () => {
 
-    let inputRef = useRef()
-    let history = useHistory()
+    const inputEmailRef = useRef()
+    const inputPasswordRef = useRef()
+    const [error, setError] = useState('');
+    const history = useHistory()
 
-    let initialState = {
+    const initialState = {
         email: null,
         password: null,
         errors: {
@@ -25,22 +28,28 @@ const Login = () => {
     } = useFormValidator(initialState)
 
     useEffect(() => {
-        inputRef.current.focus();
-    }, [])
+        inputEmailRef.current.focus();
+    }, []);
 
     const onLogin = (event) => {
 
         event.preventDefault()
 
-        const { email, password } = fields
-
         if(onHandleSubmit(event)){
-            if (email === 'admin@admin.com' && password === 'deep@123') {
-                history.push('/home')
-            }
-            else{
-                alert("Login credential is not matched!")
-            }
+            apiHandler("http://localhost:3000/api/userData", "post", fields)
+            .then((result) => {
+                if(result > 0)
+                    history.push('/home')
+                else{
+                    setError(result);
+                    inputEmailRef.current.value = '';
+                    inputPasswordRef.current.value = '';
+                    inputEmailRef.current.focus();
+                }                    
+            })
+            .catch((err) => {
+                console.error(err);
+            });
         }
     }    
 
@@ -51,11 +60,12 @@ const Login = () => {
             <form className="form-label" onSubmit={(event) => onLogin(event)}>
                 <img className="mb-4" src="/assets/public/dist/img/user-login.jpg" alt="" width="72" height="72" />
                 <h1 className="h3 mb-3">Please sign in</h1>
+                <span style={{color: "red"}}>{error && error}</span>
                 <div className="row">
                     <div className="col-md-7 offset-2">
                         <label htmlFor="inputEmail" className="sr-only">Email address</label>
                         <input 
-                            ref={inputRef}
+                            ref={inputEmailRef}
                             type="email" 
                             name="email"
                             className="form-control-sm inputText" 
@@ -69,6 +79,7 @@ const Login = () => {
                     <div className="col-md-7 offset-2">
                         <label htmlFor="inputPassword" className="sr-only">Password</label>
                         <input 
+                            ref={inputPasswordRef}
                             type="password" 
                             name="password" 
                             minLength="3"

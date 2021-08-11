@@ -3,6 +3,7 @@ const cors = require("cors")
 const bodyParser = require("body-parser")
 const app = express()
 
+const userRouter = require("./router/userRouter")
 const customerRouter = require("./router/customerRouter")
 
 app.use(cors())
@@ -10,6 +11,7 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
+app.use('/api', userRouter)
 app.use('/api', customerRouter)
 
 app.listen(3000, err => {
