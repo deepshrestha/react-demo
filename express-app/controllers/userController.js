@@ -7,7 +7,6 @@ exports.getCustomerData = (req, res, next) => {
     const password = req.body.password;
     userDB.find({email, password}, (err, result) => {
         if (err) throw new Error(err);
-        //console.log(result.length)
         if(result.length > 0)
             res.json(result.length);
         else
