@@ -1,5 +1,6 @@
 const DB = require("./../models/customerModel");
 const customerDB = DB.customer;
+const counterDB = DB.counter;
 
 exports.getTotalCustomerData = (req, res) => {
   customerDB.countDocuments((err, result) => {
@@ -36,24 +37,31 @@ exports.editCustomerDataById = (req, res, next) => {
 };
 
 exports.postCustomerData = (req, res) => {
-  customerDB.create(
-    {
-      _id: req.body.CustomerID,
-      City: req.body.City,
-      CustomerID: req.body.CustomerID,
-      Zone: req.body.Zone,
-      CustomerName: req.body.CustomerName,
-    },
-    (err) => {
-      if (err) throw new Error(err);
-      else {
-        customerDB.find({}, (err, result) => {
-          if (err) throw new Error(err);
-          res.json(result);
-        });
+
+  var auto_increment = counterDB.findOneAndUpdate(
+    { _id: "id" },
+    { $inc: { sequence_value: 1 } }
+  );  
+  auto_increment.then(val => {
+    customerDB.create(
+      {
+        _id: val.sequence_value, 
+        City: req.body.City,
+        CustomerID: val.sequence_value, 
+        Zone: req.body.Zone,
+        CustomerName: req.body.CustomerName,
+      },
+      (err) => {
+        if (err) throw new Error(err);
+        else {
+          customerDB.find({}, (err, result) => {
+            if (err) throw new Error(err);
+            res.json(result);
+          });
+        }
       }
-    }
-  );
+    );
+  });
 };
 
 exports.deleteCustomerDataById = (req, res) => {

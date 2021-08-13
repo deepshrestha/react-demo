@@ -26,22 +26,7 @@ const AddCustomerContainer = () => {
     setFields
   } = useFormValidator(initialState) 
 
-  const { errors } = fields
-
-  useEffect(() => {
-    apiHandler("http://localhost:3000/api/count")
-    .then((count) => {
-      const formData = {
-        ...fields,
-        CustomerID: count + 1
-      };
-      console.log(formData);
-      setFields(formData);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-  }, []);
+  const { errors } = fields  
 
   const onAddCustomerDataHandler = (event) => {
     event.preventDefault();

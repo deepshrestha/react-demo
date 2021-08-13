@@ -28,6 +28,15 @@ const customerSchema = new mongoose.Schema(
     }    
 );
 
+const counterSchema = new mongoose.Schema({
+    _id: {
+        type: String
+    },
+	sequence_value: {
+		type: Number
+    }
+});
+
 const userSchema = new mongoose.Schema(
     {
         _id: {
@@ -42,10 +51,12 @@ const userSchema = new mongoose.Schema(
     }    
 );
 
+const counter = mongoose.model('counter', counterSchema);
 const customer =  mongoose.model('customer', customerSchema);
 const userAccount = mongoose.model('userAccount', userSchema);
 
 module.exports= {
+    counter,
     customer,
     userAccount
 }

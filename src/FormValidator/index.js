@@ -70,7 +70,7 @@ export const useFormValidator = (props) => {
       case "text":
       case "password":
         errors[name] =
-          (value.length && props.errors.hasOwnProperty(name)) == 0 ? `The ${placeholder ?? name} field is required` : "";
+          (value.length == 0 && props.errors.hasOwnProperty(name)) ? `The ${placeholder ?? name} field is required` : "";
         break;
       case "select-one":
         errors[name] =

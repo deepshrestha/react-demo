@@ -25,6 +25,7 @@ const CustomerAdd = ({
             ref={inputRef}
             type="text"
             name="CustomerName"
+            placeholder="Customer Name"
             className="form-control"
             id="inputCustomername"
             onChange={onHandleChange}
@@ -41,6 +42,7 @@ const CustomerAdd = ({
           <input
             type="text"
             name="Zone"
+            placeholder="Zone"
             className="form-control"
             id="inputZone"
             onChange={onHandleChange}
@@ -54,6 +56,7 @@ const CustomerAdd = ({
           <input
             type="text"
             name="City"
+            placeholder="City"
             className="form-control"
             id="inputCity"
             onChange={onHandleChange}

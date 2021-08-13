@@ -28,8 +28,7 @@ const EditCustomerContainer = ({ match }) => {
   const { id } = match.params;
   const customerData = useSelector((state) => {
     return {
-      customer: state.customer.customer,
-      customers: state.customer.customers,
+      customer: state.customer.customer
     };
   });
 

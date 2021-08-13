@@ -40,6 +40,7 @@ const CustomerEdit = ({
               <input
                 type="text"
                 name="CustomerName"
+                placeholder="Customer Name"
                 className="form-control"
                 id="inputCustomername"
                 defaultValue={customerData[0].CustomerName}
@@ -57,6 +58,7 @@ const CustomerEdit = ({
               <input
                 type="text"
                 name="Zone"
+                placeholder="Zone"
                 className="form-control"
                 id="inputZone"
                 defaultValue={customerData[0].Zone}
@@ -71,6 +73,7 @@ const CustomerEdit = ({
               <input
                 type="text"
                 name="City"
+                placeholder="City"
                 className="form-control"
                 id="inputCity"
                 defaultValue={customerData[0].City}
